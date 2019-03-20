@@ -1,94 +1,37 @@
 import React from "react";
 import Square from "./square";
 
-const PLAYER_1_SYMBOL = "X";
-const PLAYER_2_SYMBOL = "O";
+const BOARD_ROW_COUNT = 3;
+const SQUARE_COUNT_PER_ROW = 3;
 
 export default class Board extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares: Array(9).fill(null),
-      player1IsNext: true,
-    };
-    this.handleClick = this.handleClick.bind(this);
-  }
-
-  handleClick(i) {
-    const squares = [...this.state.squares];
-
-    if (calculateWinner(squares) || squares[i]) {
-      return;
-    }
-
-    squares[i] = this.state.player1IsNext ? PLAYER_1_SYMBOL : PLAYER_2_SYMBOL;
-    this.setState({
-      squares,
-      player1IsNext: !this.state.player1IsNext,
-    });
-  }
-
   renderSquare(i) {
     return (
       <Square
-        value={this.state.squares[i]}
-        onClick={() => this.handleClick(i)}
+        key={i}
+        value={this.props.squares[i]}
+        onClick={() => this.props.onClick(i)}
       />
     );
   }
 
+  renderRows(row) {
+    const squares = Array(SQUARE_COUNT_PER_ROW).fill(null);
+    return squares.map((square, i) => {
+      return this.renderSquare(row * SQUARE_COUNT_PER_ROW + i);
+    });
+  }
+
   render() {
-    const currentPlayer = this.state.player1IsNext
-      ? PLAYER_1_SYMBOL
-      : PLAYER_2_SYMBOL;
-    const winner = calculateWinner(this.state.squares);
-    let status;
+    const rows = Array(BOARD_ROW_COUNT).fill(null);
+    const board = rows.map((row, i) => {
+      return (
+        <div key={i} className="board-row">
+          {this.renderRows(i)}
+        </div>
+      );
+    });
 
-    if (winner) {
-      status = "Winner: " + winner;
-    } else {
-      status = "Next player: " + currentPlayer;
-    }
-
-    return (
-      <div>
-        <div className="status">{status}</div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
-    );
+    return <div>{board}</div>;
   }
 }
-
-const calculateWinner = squares => {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
-    }
-  }
-  return null;
-};
