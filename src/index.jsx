@@ -1,7 +1,7 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import Board from './board';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import Board from "./board";
 
 class Game extends React.Component {
   render() {
@@ -21,7 +21,4 @@ class Game extends React.Component {
 
 // ========================================
 
-ReactDOM.render(
-  <Game />,
-  document.getElementById('root'),
-);
+ReactDOM.render(<Game />, document.getElementById("root"));
