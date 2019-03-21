@@ -44,13 +44,14 @@ class Game extends React.Component {
     });
   }
 
-  renderHistory() {
+  renderHistory(currentStep) {
     const history = this.state.history;
     return history.map((step, move) => {
       const description = move ? "Go to move #" + move : "Go to game start";
+      let style = move === currentStep ? { fontWeight: "bold" } : {};
       return (
         <li key={move}>
-          <button type="button" onClick={() => this.jumpTo(move)}>
+          <button type="button" style={style} onClick={() => this.jumpTo(move)}>
             {description}
           </button>
         </li>
@@ -65,7 +66,7 @@ class Game extends React.Component {
       ? PLAYER_1_SYMBOL
       : PLAYER_2_SYMBOL;
     const winner = calculateWinner(currentBoard.squares);
-    const moves = this.renderHistory();
+    const moves = this.renderHistory(this.state.stepNumber);
     let status;
 
     if (winner) {
