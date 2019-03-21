@@ -13,10 +13,12 @@ class Game extends React.Component {
       history: [
         {
           squares: Array(9).fill(null),
+          cell: null,
         },
       ],
       stepNumber: 0,
       player1IsNext: true,
+      ascending: true,
     };
   }
 
@@ -31,9 +33,15 @@ class Game extends React.Component {
 
     squares[i] = this.state.player1IsNext ? PLAYER_1_SYMBOL : PLAYER_2_SYMBOL;
     this.setState({
-      history: [...history, ...[{ squares }]],
+      history: [...history, ...[{ squares, cell: i }]],
       stepNumber: history.length,
       player1IsNext: !this.state.player1IsNext,
+    });
+  }
+
+  toggleSort() {
+    this.setState({
+      ascending: !this.state.ascending,
     });
   }
 
@@ -44,11 +52,18 @@ class Game extends React.Component {
     });
   }
 
-  renderHistory(currentStep) {
+  renderHistory() {
     const history = this.state.history;
-    return history.map((step, move) => {
-      const description = move ? "Go to move #" + move : "Go to game start";
-      let style = move === currentStep ? { fontWeight: "bold" } : {};
+    console.log(history);
+    const renderedHistory = history.map((step, move) => {
+      const col = (step.cell % 3) + 1;
+      const row = parseInt(step.cell / 3) + 1;
+      const coordinate = "(" + col + ", " + row + ")";
+      const description = move
+        ? "Go to move #" + move + " " + coordinate
+        : "Go to game start";
+      const style =
+        move === this.state.stepNumber ? { fontWeight: "bold" } : {};
       return (
         <li key={move}>
           <button type="button" style={style} onClick={() => this.jumpTo(move)}>
@@ -57,6 +72,7 @@ class Game extends React.Component {
         </li>
       );
     });
+    return this.state.ascending ? renderedHistory : renderedHistory.reverse();
   }
 
   render() {
@@ -66,7 +82,8 @@ class Game extends React.Component {
       ? PLAYER_1_SYMBOL
       : PLAYER_2_SYMBOL;
     const winner = calculateWinner(currentBoard.squares);
-    const moves = this.renderHistory(this.state.stepNumber);
+    const sort = "Sort " + (this.state.ascending ? "^" : "v");
+    const moves = this.renderHistory();
     let status;
 
     if (winner) {
@@ -85,6 +102,9 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
+          <button type="button" onClick={() => this.toggleSort()}>
+            {sort}
+          </button>
           <ol>{moves}</ol>
         </div>
       </div>
