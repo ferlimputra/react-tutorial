@@ -35,6 +35,8 @@ class Game extends React.Component {
       player1IsNext: true,
       ascending: true,
     };
+    this.handleClick = this.handleClick.bind(this);
+    this.jumpTo = this.jumpTo.bind(this);
   }
 
   handleClick(i) {
@@ -109,7 +111,7 @@ class Game extends React.Component {
     return (
       <div className="game">
         <div className="game-board">
-          <Board squares={currentBoard.squares} onClick={i => this.handleClick(i)} />
+          <Board squares={currentBoard.squares} onClick={this.handleClick} />
         </div>
         <div className="game-info">
           <div>{status}</div>
